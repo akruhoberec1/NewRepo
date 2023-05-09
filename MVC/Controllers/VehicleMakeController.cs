@@ -20,18 +20,14 @@ namespace MVC.Controllers
 
 
         [HttpGet]
-        public async Task<ActionResult> FindAllAsync(int? page, string searchString = null, itemsPerPage=10, string sortBy = "Id", string sortOrder = "asc")
+        public async Task<ActionResult> FindAllAsync(VehicleMakeDTO vehicleMake)
         {
-            return View(makes.Select(make => _mapper.Map<VehicleMakeDTO>(make)));
 
-            Paging paging = new Paging
-            {
-                page = page,
-                ItemsPerPage = itemsPerPage
-            };
         }
 
-       
+
+
+
 
     }
 }

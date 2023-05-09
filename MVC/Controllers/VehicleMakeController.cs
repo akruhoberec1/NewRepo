@@ -1,28 +1,28 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Service.Models.DTOs;
+using MVC.Models;
 using Service.Service.IService;
 
 namespace MVC.Controllers
 {
     public class VehicleMakeController : Controller
     {
-        protected IVehicleMake VehicleMake;
+        private readonly IVehicleMake _vehicleMakeService;
         private readonly IMapper _mapper;
 
-        public VehicleMakeController(IMapper mapper, IVehicleMake vehicleMake)
+        public VehicleMakeController(IVehicleMake vehicleMakeService, IMapper mapper)
         {
-            _mapper = mapper;
-            VehicleMake = vehicleMake;
+            _vehicleMakeService = vehicleMakeService;   
+            _mapper = mapper;   
         }
 
-
         [HttpGet]
-        public async Task<ActionResult> FindAllAsync(VehicleMakeDTO vehicleMake)
+        public async Task<IActionResult> Index()
         {
+            var makes = await _vehicleMakeService.GetAllMakesAsync();
+            var makeVMs = _mapper.Map<List<VehicleMakeVM>>(makes);
 
+            return View(makeVMs);
         }
 
 

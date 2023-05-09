@@ -9,7 +9,11 @@ namespace Service.Service.IService
 {
     public interface IVehicleMake
     {
-        Task<List<CreateVehicleMakeDTO>> AddMakeAsync(CreateVehicleMakeDTO make);
+        Task<List<VehicleMakeDTO>> GetAllMakesAsync();
+        Task<VehicleMakeDTO> GetMakeByIdAsync(int id);
 
+        Task<List<VehicleMakeDTO>> AddMakeAsync(VehicleMakeDTO makeDTO);
+        Task<bool> UpdateMakeAsync(int id, VehicleMakeDTO makeDto);
+        Task<bool> DeleteMakeAsync(int id);
     }
 }

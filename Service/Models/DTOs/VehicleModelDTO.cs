@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace Service.Models.DTOs
 {
-    public class VehicleMakeDTO
+    public class VehicleModelDTO
     {
-        public int Id { get; set; }     
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Abrv { get; set; }
+        public int MakeId { get; set; } 
     }
 }

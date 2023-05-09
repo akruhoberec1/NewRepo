@@ -11,10 +11,12 @@ namespace Service.Mapper
 {
     public class AutoMapperProfile : Profile
     {
-        public AutoMapperProfile() 
+        public AutoMapperProfile()
         {
             CreateMap<VehicleMake, VehicleMakeDTO>();
-            CreateMap<CreateVehicleMakeDTO, VehicleMake>();
+            CreateMap<VehicleMakeDTO, VehicleMake>();
+            CreateMap<IEnumerable<VehicleMake>, IEnumerable<VehicleMakeDTO>>().ReverseMap();
+            CreateMap<VehicleModel, VehicleModelDTO>().ReverseMap();
         }
 
     }

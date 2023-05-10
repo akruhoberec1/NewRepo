@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using Service.Data;
 using Service.Models;
@@ -25,11 +26,14 @@ namespace Service.Service
         }
 
         //GET ALL
-        public async Task<List<VehicleMakeDTO>> GetAllMakesAsync()
+        public async Task<IEnumerable<VehicleMakeDTO>> GetAllMakesAsync()
         {
             var makes = await _context.VehicleMakes.ToListAsync();
-            var makeDTOs = _mapper.Map<List<VehicleMakeDTO>>(makes);
-            return makeDTOs;
+
+            var makeListDtos = makes.Select(m => _mapper.Map<VehicleMakeDTO>(m));
+
+
+            return makeListDtos;
         }
         public async Task<VehicleMakeDTO> GetMakeByIdAsync(int id)
         {
@@ -38,20 +42,22 @@ namespace Service.Service
             return _mapper.Map<VehicleMakeDTO>(make);
         }
 
-        public async Task<List<VehicleMakeDTO>> AddMakeAsync(VehicleMakeDTO makeDTO)
+        public async Task<IEnumerable<VehicleMakeDTO>> AddMakeAsync(VehicleMakeDTO makeDTO)
         {
             var make = _mapper.Map<VehicleMake>(makeDTO);
             await _context.VehicleMakes.AddAsync(make);
             await _context.SaveChangesAsync();
-
+            
             var makeList = await _context.VehicleMakes.ToListAsync();
-            var makeListDTO = _mapper.Map<List<VehicleMakeDTO>>(makeList);
-            return makeListDTO;
-        }
+            //var makeListDTO = _mapper.Map<List<VehicleMakeDTO>>(makeList);
+            var makeListDtos = makeList.Select(m => _mapper.Map<VehicleMakeDTO>(m)).ToList();
 
-        public async Task<bool> UpdateMakeAsync( int id, VehicleMakeDTO makeDTO)
+            return makeListDtos;
+        }
+        //int id nije potreban jer se moze iskoristiti id iz VehicleMakeDTO modela
+        public async Task<bool> UpdateMakeAsync(VehicleMakeDTO makeDTO)
         {
-            var findMake = await _context.VehicleMakes.FindAsync(id);
+            var findMake = await _context.VehicleMakes.FindAsync(makeDTO.Id);
             if (findMake == null) return false;
             var make = _mapper.Map(makeDTO, findMake);
 

@@ -20,14 +20,10 @@ namespace MVC.Controllers
         public async Task<IActionResult> Index()
         {
             var makes = await _vehicleMakeService.GetAllMakesAsync();
-            var makeVMs = _mapper.Map<List<VehicleMakeVM>>(makes);
+            //var makeVMs = _mapper.Map<List<VehicleMakeVM>>(makes);
+            //viewModel je isti kao i DTO koji dobijem pozivanjem GetAllMakesAsync metode, stoga je nije potrebno mapirati jos jednom u kontroleru
 
-            return View(makeVMs);
+            return View(makes);
         }
-
-
-
-
-
     }
 }

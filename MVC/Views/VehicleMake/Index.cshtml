@@ -11,6 +11,8 @@
         </tr>
     </thead>
     <tbody>
+    if (Model != null && Model.Any())
+    {
         @foreach (var make in Model)
         {
             <tr>
@@ -22,5 +24,6 @@
                 </td>
             </tr>
         }
+    }else{ <tr> No data to display </tr>
     </tbody>
 </table>

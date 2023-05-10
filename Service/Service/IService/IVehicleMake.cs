@@ -9,11 +9,13 @@ namespace Service.Service.IService
 {
     public interface IVehicleMake
     {
-        Task<List<VehicleMakeDTO>> GetAllMakesAsync();
+        //uvijek treba koristiti apstrakciju, ako koristimo interface, a ne strogo odredjenu kolekciju, kasnije je lakse napraviti promjenu u kodu
+        Task<IEnumerable<VehicleMakeDTO>> GetAllMakesAsync();
         Task<VehicleMakeDTO> GetMakeByIdAsync(int id);
 
-        Task<List<VehicleMakeDTO>> AddMakeAsync(VehicleMakeDTO makeDTO);
-        Task<bool> UpdateMakeAsync(int id, VehicleMakeDTO makeDto);
+        //mozemo koristiti id iz VehicleMakeDTO modela
+        Task<IEnumerable<VehicleMakeDTO>> AddMakeAsync(VehicleMakeDTO makeDTO);
+        Task<bool> UpdateMakeAsync(VehicleMakeDTO makeDto);
         Task<bool> DeleteMakeAsync(int id);
     }
 }

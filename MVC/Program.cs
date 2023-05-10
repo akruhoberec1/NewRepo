@@ -17,7 +17,6 @@ builder.Services.AddSingleton<IKernel>(kernel);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<DataContext>();
 
-//uvijek koristiti automapper typeof klasa koju napravimo . assembly
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
 builder.Services.AddScoped<IVehicleMake, VehicleMakeService>();
 builder.Services.AddScoped<IVehicleModel, VehicleModelService>();

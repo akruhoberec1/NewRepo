@@ -3,6 +3,8 @@
 
 <h1>Vehicle Makes</h1>
 
+<a asp-controller="VehicleMake" asp-action="Create" class="btn btn-primary">Create</a>
+
 <table class="table">
     <thead>
         <tr>
@@ -20,8 +22,16 @@
                 <td>@make.Name</td>
                 <td>@make.Abrv</td>
                 <td>
+
+
                     <a asp-controller="VehicleMake" asp-action="Edit" asp-route-id="@make.Id">Edit</a>
-                    <a asp-controller="VehicleMake" asp-action="Delete" asp-route-id="@make.Id">Delete</a>
+
+
+                    <form asp-controller="VehicleMake" asp-action="Delete" asp-route-id="@make.Id" method="post" onsubmit="return confirm('You sure?')">
+                        <button type="submit">Delete</button>
+                    </form>
+                    @*<a asp-controller="VehicleMake" asp-action="Delete" asp-route-id="@make.Id" >Delete</a> ***** ne radi bez submita *@
+
                 </td>
             </tr>
         }

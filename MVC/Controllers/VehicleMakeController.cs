@@ -15,8 +15,8 @@ namespace MVC.Controllers
         public VehicleMakeController(ILogger<VehicleMakeController> logger, IVehicleMake vehicleMakeService, IMapper mapper)
         {
             _logger = logger;
-            _vehicleMakeService = vehicleMakeService;   
-            _mapper = mapper;   
+            _vehicleMakeService = vehicleMakeService;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -30,13 +30,62 @@ namespace MVC.Controllers
             return View(makes);
         }
 
-        public async Task<IActionResult> UpdateMakeAsync(VehicleMakeDTO makeDto)
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
         {
-            _logger.LogInformation("Update view");
+            _logger.LogInformation("Edit view");
 
-            var make = await _vehicleMakeService.UpdateMakeAsync(makeDto);
+            var make = await _vehicleMakeService.GetMakeByIdAsync(id);
 
             return View(make);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Update(VehicleMakeDTO makeDTO)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _vehicleMakeService.UpdateMakeAsync(makeDTO);
+                if (result)
+                {
+                    return RedirectToAction("Index", "VehicleMake");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Failed to update vehicle make.");
+                }
+            }
+            return View(makeDTO);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var deleted = await _vehicleMakeService.DeleteMakeAsync(id);
+            if (!deleted)
+            {
+                return NotFound();
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Create()
+        {
+            _logger.LogInformation("Create view");
+
+
+            return View();
+        }
+
+            [HttpPost]
+        public async Task<IActionResult> AddMake(VehicleMakeDTO makeDTO)
+        {
+            if(!ModelState.IsValid) 
+            {
+                return View(makeDTO);
+            }
+                var makeListDtos = await _vehicleMakeService.AddMakeAsync(makeDTO);
+                return View("Index", makeListDtos);
+            
         }
     }
 }

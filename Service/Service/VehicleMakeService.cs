@@ -31,12 +31,11 @@ namespace Service.Service
         //GET ALL
         public async Task<IEnumerable<VehicleMakeDTO>> GetAllMakesAsync()
         {
-            //logger za log informacija, implementirati opcenito
+          
             _logger.LogInformation("Getting all vehicle makes.");
 
             var makes = await _context.VehicleMakes.ToListAsync();
-            //var makeDTOs = _mapper.Map<List<VehicleMakeDTO>>(makes);
-            //1. nacin 
+
             var makeListDtos = makes.Select(m => _mapper.Map<VehicleMakeDTO>(m));
             //2. nacin -> ne radi ******* porque??
             //var makeListDtos2 = await _context.VehicleMakes.ProjectTo<VehicleMakeDTO>(_mapper.ConfigurationProvider).ToListAsync();

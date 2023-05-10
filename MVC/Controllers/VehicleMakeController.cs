@@ -25,7 +25,7 @@ namespace MVC.Controllers
             _logger.LogInformation("Index view");
             var makes = await _vehicleMakeService.GetAllMakesAsync();
             //var makeVMs = _mapper.Map<List<VehicleMakeVM>>(makes);
-            //viewModel ti je isto kao i DTO koji dobijes pozivanjem GetAllMakesAsync metode, stoga je nije potrebno mapirati jos jednom u kotroleru
+            //viewModel bi trebao biti isto što i DTO pa nije potrebno mapiranje?!
 
             return View(makes);
         }

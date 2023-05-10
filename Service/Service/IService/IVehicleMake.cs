@@ -16,5 +16,8 @@ namespace Service.Service.IService
         Task<IEnumerable<VehicleMakeDTO>> AddMakeAsync(VehicleMakeDTO makeDTO);
         Task<bool> UpdateMakeAsync(VehicleMakeDTO makeDto);
         Task<bool> DeleteMakeAsync(int id);
+        Task<VehicleMakeDTO> GetMakeByNameAsync(string makeName);
+
+
     }
 }

@@ -29,6 +29,7 @@ namespace Service.Ninject
             Bind<IMapper>().ToConstant(mapper);
 
             Bind<IVehicleMake>().To<VehicleMakeService>();
+            Bind<IVehicleModel>().To<VehicleModelService>();        
 
         }
     }

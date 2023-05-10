@@ -1,0 +1,42 @@
+﻿@using Service.Models.DTOs;
+@model IEnumerable<VehicleModelDTO>
+
+<h1>Vehicle Models Admin View</h1>
+
+<a asp-controller="VehicleModel" asp-action="Create" class="btn btn-primary">Create</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Abbreviation</th>
+            <th>Make</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var mody in Model)
+        {
+            <tr>
+                <td>@mody.Id</td>
+                <td>@mody.Name</td>
+                <td>@mody.Abrv</td>
+                <td>@mody.MakeName</td>
+
+                <td>
+
+
+                    <a asp-controller="VehicleModel" asp-action="Edit" asp-route-id="@mody.Id">Edit</a>
+
+
+                    <form asp-controller="VehicleModel" asp-action="Delete" asp-route-id="@mody.Id" method="post" onsubmit="return confirm('You sure?')">
+                        <button type="submit">Delete</button>
+                    </form>
+   
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

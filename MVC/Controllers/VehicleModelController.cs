@@ -1,0 +1,136 @@
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using MVC.Models;
+using Service.Models.DTOs;
+using Service.Service;
+using Service.Service.IService;
+
+namespace MVC.Controllers
+{
+    public class VehicleModelController : Controller
+    {
+        private readonly ILogger<VehicleModelController> _logger;
+        private readonly IVehicleModel _vehicleModelService;
+        private readonly IMapper _mapper;
+        private readonly IVehicleMake _vehicleMakeService;
+
+        public VehicleModelController(ILogger<VehicleModelController> logger, IVehicleModel vehicleModelService, IMapper mapper, IVehicleMake vehicleMakeService)
+        {
+            _logger = logger;
+            _vehicleModelService = vehicleModelService;
+            _vehicleMakeService = vehicleMakeService;
+            _mapper = mapper;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Index()
+        {
+            _logger.LogInformation("Index view");
+            var models = await _vehicleModelService.GetModelsAsync();
+
+            foreach (var model in models)
+            {
+                var make = await _vehicleMakeService.GetMakeByNameAsync(model.MakeName);    
+                model.MakeName = make.Name; 
+            }
+
+            return View(models);
+        }
+
+            [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            _logger.LogInformation("Edit view");
+
+            var model = await _vehicleModelService.GetModelById(id);
+
+            var makes = await _vehicleMakeService.GetAllMakesAsync();
+            ViewBag.Makes = makes.Select(m => new SelectListItem
+            {
+                Text = m.Name,
+                Value = m.Id.ToString()
+            });
+
+            return View(model);
+        }
+
+        [HttpPost]
+        //public async Task<IActionResult> Update(VehicleModelDTO modelDTO)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        var result = await _vehicleModelService.UpdateModelAsync(modelDTO);
+        //        if (result)
+        //        {
+        //            return RedirectToAction("Index", "VehicleModel");
+        //        }
+        //        else
+        //        {
+        //            ModelState.AddModelError("", "Failed to update vehicle make.");
+        //        }
+        //    }
+        //    return View(modelDTO);
+        //}
+
+        public async Task<IActionResult> Update(VehicleModelDTO modelDTO)
+        {
+            if (ModelState.IsValid)
+            {
+                var make = await _vehicleMakeService.GetMakeByNameAsync(modelDTO.MakeName);
+                if (make == null)
+                {
+                    ModelState.AddModelError("", "Invalid make name.");
+                }
+                else
+                {
+                    modelDTO.MakeName = make.Name;
+                    var result = await _vehicleModelService.UpdateModelAsync(modelDTO);
+                    if (result)
+                    {
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Failed to update vehicle make.");
+                    }
+                }
+            }
+            ViewBag.Makes = new SelectList(await _vehicleMakeService.GetAllMakesAsync(), "Name", "Name");
+            return View("Edit", modelDTO);
+        }
+
+    
+
+    [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var deleted = await _vehicleModelService.DeleteModelAsync(id);
+            if (!deleted)
+            {
+                return NotFound();
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Create()
+        {
+            _logger.LogInformation("Create view");
+
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddModel(VehicleModelDTO modelDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(modelDTO);
+            }
+            var makeListDtos = await _vehicleModelService.AddModelAsync(modelDTO);
+            return View("Index", makeListDtos);
+
+        }
+
+    }
+}

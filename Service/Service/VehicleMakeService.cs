@@ -83,5 +83,13 @@ namespace Service.Service
             var deletedMake = await _context.SaveChangesAsync();
             return deletedMake > 0;
         }
+
+        public async Task<VehicleMakeDTO> GetMakeByNameAsync(string makeName)
+        {
+            var make = await _context.VehicleMakes
+                .SingleOrDefaultAsync(m => m.Name == makeName);
+            return _mapper.Map<VehicleMakeDTO>(make);
+        }
+
     }
 }

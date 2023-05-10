@@ -1,21 +1,22 @@
-﻿@model List<MVC.Models.VehicleMakeVM>
+﻿@using Service.Models.DTOs;
+@model IEnumerable<VehicleMakeDTO>
 
 <h1>Vehicle Makes</h1>
 
 <table class="table">
     <thead>
         <tr>
+            <th>Id</th>
             <th>Name</th>
             <th>Abbreviation</th>
             <th>Action</th>
         </tr>
     </thead>
     <tbody>
-    if (Model != null && Model.Any())
-    {
         @foreach (var make in Model)
         {
             <tr>
+                <td>@make.Id</td>
                 <td>@make.Name</td>
                 <td>@make.Abrv</td>
                 <td>
@@ -24,6 +25,5 @@
                 </td>
             </tr>
         }
-    }else{ <tr> No data to display </tr>
     </tbody>
 </table>

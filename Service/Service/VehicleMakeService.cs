@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Service.Data;
 using Service.Models;
 using Service.Models.DTOs;
@@ -16,11 +17,13 @@ namespace Service.Service
 {
     public class VehicleMakeService : IVehicleMake
     {
+        private readonly ILogger<VehicleMakeService> _logger;
         private readonly DataContext _context;
         IMapper _mapper;
 
-        public VehicleMakeService(IMapper mapper, DataContext context)
+        public VehicleMakeService(ILogger<VehicleMakeService> logger, IMapper mapper, DataContext context)
         {
+            _logger = logger;
             _mapper = mapper;   
             _context = context; 
         }
@@ -28,10 +31,15 @@ namespace Service.Service
         //GET ALL
         public async Task<IEnumerable<VehicleMakeDTO>> GetAllMakesAsync()
         {
+            //logger za log informacija, implementirati opcenito
+            _logger.LogInformation("Getting all vehicle makes.");
+
             var makes = await _context.VehicleMakes.ToListAsync();
-
+            //var makeDTOs = _mapper.Map<List<VehicleMakeDTO>>(makes);
+            //1. nacin 
             var makeListDtos = makes.Select(m => _mapper.Map<VehicleMakeDTO>(m));
-
+            //2. nacin -> ne radi ******* porque??
+            //var makeListDtos2 = await _context.VehicleMakes.ProjectTo<VehicleMakeDTO>(_mapper.ConfigurationProvider).ToListAsync();
 
             return makeListDtos;
         }
@@ -54,7 +62,7 @@ namespace Service.Service
 
             return makeListDtos;
         }
-        //int id nije potreban jer se moze iskoristiti id iz VehicleMakeDTO modela
+        //int nije potreban -> id iz VehicleMakeDTO modela
         public async Task<bool> UpdateMakeAsync(VehicleMakeDTO makeDTO)
         {
             var findMake = await _context.VehicleMakes.FindAsync(makeDTO.Id);

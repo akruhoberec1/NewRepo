@@ -1,6 +1,7 @@
 global using Microsoft.EntityFrameworkCore;
 using Ninject;
 using Service.Data;
+using Service.Mapper;
 using Service.Ninject;
 using Service.Service;
 using Service.Service.IService;
@@ -15,7 +16,9 @@ kernel.Load(new NinjectBindings());
 builder.Services.AddSingleton<IKernel>(kernel);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<DataContext>();
-builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
+//uvijek koristiti automapper typeof klasa koju napravimo . assembly
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
 builder.Services.AddScoped<IVehicleMake, VehicleMakeService>();
 builder.Services.AddScoped<IVehicleModel, VehicleModelService>();
 
@@ -33,8 +36,10 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+
+//prebaciti kontrolere, default ce biti model 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=VehicleMake}/{action=Index}/{id?}");
 
 app.Run();

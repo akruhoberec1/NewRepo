@@ -37,8 +37,7 @@ namespace Service.Service
             var makes = await _context.VehicleMakes.ToListAsync();
 
             var makeListDtos = makes.Select(m => _mapper.Map<VehicleMakeDTO>(m));
-            //2. nacin -> ne radi ******* porque??
-            //var makeListDtos2 = await _context.VehicleMakes.ProjectTo<VehicleMakeDTO>(_mapper.ConfigurationProvider).ToListAsync();
+
 
             return makeListDtos;
         }

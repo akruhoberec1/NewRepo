@@ -39,6 +39,6 @@ app.UseAuthorization();
 //prebaciti kontrolere, default ce biti model 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=VehicleMake}/{action=Index}/{id?}");
+    pattern: "{controller=VehicleModel}/{action=Index1}/{id?}");
 
 app.Run();

@@ -1,23 +1,33 @@
 ﻿@using Service.Models.DTOs;
-@model VehicleModelDTO;
+@model VehicleModelDTO
 
-<h1>Insert New Vehicle Model</h1>
+@{
+    ViewData["Title"] = "Create Vehicle Model";
+}
 
-<form asp-controller="VehicleModel" asp-action="AddModel" method="post">
+<h1>Create</h1>
+
+<form asp-action="AddModel">
     <div class="form-group">
-        <label for="name">Name</label>
-        <input type="text" class="form-control" id="name" name="Name" placeholder="Enter name" required>
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
     </div>
+
     <div class="form-group">
-        <label for="abrv">Abbreviation</label>
-        <input type="text" class="form-control" id="abrv" name="Abrv" placeholder="Enter abbreviation" required>
+        <label asp-for="Abrv"></label>
+        <input asp-for="Abrv" class="form-control" />
+        <span asp-validation-for="Abrv" class="text-danger"></span>
     </div>
+
     <div class="form-group">
-        <label asp-for="MakeName" class="control-label"></label>
-        <select asp-for="MakeName" asp-items="@(ViewBag.Makes)" class="form-control">
-            <option value="">-- Select Make --</option>
-        </select>
+        <label asp-for="MakeId"></label>
+        <select asp-for="MakeId" class="form-control" asp-items="@ViewBag.Makes"></select>
+        <span asp-validation-for="MakeId" class="text-danger"></span>
     </div>
 
     <button type="submit" class="btn btn-primary">Create</button>
 </form>
+
+<a asp-action="Index">Back to Model Admin View</a>
+<a asp-action="Index1">Back to Home</a>

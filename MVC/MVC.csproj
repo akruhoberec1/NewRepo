@@ -7,27 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Views\VehicleModel\Create.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Ninject" Version="3.3.6" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Service\Service.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Views\VehicleModel\Create.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Views\VehicleModel\Create.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Views\VehicleModel\Create.cshtml" />
   </ItemGroup>
 
 </Project>

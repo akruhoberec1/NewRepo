@@ -2,6 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Ninject.Activation.Caching;
 using Service.Data;
 using Service.Models;
 using Service.Models.DTOs;
@@ -17,10 +18,10 @@ namespace Service.Service
 {
     public class VehicleModelService : IVehicleModel
     {
-        private readonly ILogger<VehicleModelService> _logger;   
+        private readonly ILogger<VehicleModelService> _logger;
         private readonly DataContext _context;
         IMapper _mapper;
- 
+
 
         public VehicleModelService(IMapper mapper, DataContext context, ILogger<VehicleModelService> logger)
         {
@@ -33,21 +34,21 @@ namespace Service.Service
         {
             _logger.LogInformation("Getting all vehicle models!");
 
-            var models = await _context.VehicleModels.ToListAsync();
+            var models = await _context.VehicleModels.Include(vm => vm.VehicleMake).ToListAsync();
 
             var modelListDtos = models.Select(m => _mapper.Map<VehicleModelDTO>(m));
 
             return modelListDtos;
         }
 
-        public async Task<IEnumerable<VehicleModelDTO>> AddModelAsync(VehicleModelDTO modelDTO)
+        public async Task<IEnumerable<VehicleModelDTO>> AddModelAsync(CreateVehicleModelDTO modelDTO)
         {
             var model = _mapper.Map<VehicleModel>(modelDTO);
             await _context.VehicleModels.AddAsync(model);
             await _context.SaveChangesAsync();
-            
+
             var modelList = await _context.VehicleModels.ToListAsync();
-          
+
             var modelListDtos = modelList.Select(m => _mapper.Map<VehicleModelDTO>(m)).ToList();
 
             return modelListDtos;
@@ -71,18 +72,48 @@ namespace Service.Service
             return _mapper.Map<VehicleModelDTO>(model);
         }
 
-
-
-        public async Task<bool> UpdateModelAsync(VehicleModelDTO modelDTO)  
+        public async Task<bool> UpdateModelAsync(VehicleModelDTO modelDTO)
         {
-            var findModel = await _context.VehicleModels.FindAsync(modelDTO.Id);
-            if (findModel == null) return false;
-            var model = _mapper.Map(modelDTO, findModel);
+            var findModel = await _context.VehicleModels
+                .Include(vm => vm.VehicleMake)
+                .FirstOrDefaultAsync(vm => vm.Id == modelDTO.Id);
+            var findMake = await _context.VehicleMakes
+                .FirstOrDefaultAsync(vm => vm.Id == modelDTO.MakeId);
 
-            _context.VehicleModels.Update(model);
+            if (findModel == null) return false;
+
+            findModel.Name = modelDTO.Name;
+            findModel.Abrv = modelDTO.Abrv;
+            findModel.MakeId = findMake.Id;
+
+            _context.VehicleModels.Update(findModel);
             var updatedModel = await _context.SaveChangesAsync();
             return updatedModel > 0;
         }
-        
+
+        public async Task<IEnumerable<VehicleModelDTO>> GetModelsByMakeNameAsync(string makeName = null)
+        {
+            IQueryable<VehicleModel> query = _context.VehicleModels.Include(vm => vm.VehicleMake);
+
+            if (!string.IsNullOrEmpty(makeName))
+            {
+                query = query.Where(vm => vm.VehicleMake.Name.Contains(makeName));
+            }
+
+            var models = await query.AsNoTracking().ToListAsync();
+            var modelsDTO = _mapper.Map<IEnumerable<VehicleModelDTO>>(models);
+
+            return modelsDTO;
+        }
+
+        public async Task<bool> CountModelsByMakeIdAsync(int makeId)
+        {
+            var countModels =  await _context.VehicleModels
+                .CountAsync(vm => vm.MakeId == makeId);
+
+            return countModels > 0 ? true : false;
+        }
+
     }
 }
+

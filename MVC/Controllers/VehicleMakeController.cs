@@ -9,14 +9,17 @@ namespace MVC.Controllers
     public class VehicleMakeController : Controller
     {
         private readonly ILogger<VehicleMakeController> _logger;
+        private readonly IVehicleModel _vehicleModelService;
         private readonly IVehicleMake _vehicleMakeService;
         private readonly IMapper _mapper;
 
-        public VehicleMakeController(ILogger<VehicleMakeController> logger, IVehicleMake vehicleMakeService, IMapper mapper)
+        public VehicleMakeController(ILogger<VehicleMakeController> logger, IVehicleMake vehicleMakeService, IMapper mapper, IVehicleModel vehicleModelService)
         {
             _logger = logger;
             _vehicleMakeService = vehicleMakeService;
             _mapper = mapper;
+            _vehicleModelService = vehicleModelService; 
+
         }
 
         [HttpGet]
@@ -60,11 +63,26 @@ namespace MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
-            var deleted = await _vehicleMakeService.DeleteMakeAsync(id);
-            if (!deleted)
+
+            if (id == null)
             {
                 return NotFound();
             }
+            var makeDTO = await _vehicleMakeService.GetMakeByIdAsync(id);
+            if (makeDTO == null)
+            {
+                return NotFound();
+            }
+            var hasModels = await _vehicleModelService.CountModelsByMakeIdAsync(id);
+            if (hasModels)
+            {
+                ModelState.AddModelError("", "Cannot delete make that has it's own models!");
+                var makes = await _vehicleMakeService.GetAllMakesAsync();
+                return View("Index", makes);
+            }
+
+            var deleted = await _vehicleMakeService.DeleteMakeAsync(id);
+            
             return RedirectToAction(nameof(Index));
         }
 

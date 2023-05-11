@@ -25,6 +25,8 @@ namespace MVC.Controllers
 
 
 
+
+
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -34,17 +36,37 @@ namespace MVC.Controllers
             return View(models);
         }
 
+
+
+
+
+
         [HttpGet]
-        public async Task<IActionResult> Index1()
+        public async Task<IActionResult> Index1(string makeName)
         {
-            var modelsDTO = await _vehicleModelService.GetModelsAsync();
-            if (!string.IsNullOrEmpty(MakeName))
-            {
-                modelsDTO = modelsDTO.Where(m => m.MakeName.ToLower().Contains(MakeName.ToLower()));
-            }
-            return View(modelsDTO);
+ 
+                _logger.LogInformation("Index view");
+
+                var models = await _vehicleModelService.GetModelsByMakeNameAsync(makeName);
+
+                return View(models);
+
+
+            //_logger.LogInformation("Index view");
+            //var models = await _vehicleModelService.GetModelsAsync();
+
+            //return View(models);
+            ////var modelsDTO = await _vehicleModelService.GetModelsAsync();
+            //////if (!string.IsNullOrEmpty(MakeName))
+            //////{
+            //////    modelsDTO = modelsDTO.Where(m => m.MakeName.ToLower().Contains(MakeName.ToLower()));
+            //////}
+            ////return View(modelsDTO);
         }
-      
+
+        
+
+
 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
@@ -64,6 +86,11 @@ namespace MVC.Controllers
             return View(model);
         }
 
+
+
+
+
+
         [HttpPost]
         //public async Task<IActionResult> Update(VehicleModelDTO modelDTO)
         //{
@@ -82,20 +109,24 @@ namespace MVC.Controllers
         //    return View(modelDTO);
         //}
 
+
+
+
+
+
         public async Task<IActionResult> Update(VehicleModelDTO modelDTO)
         {
             _logger.LogInformation("Updating vehicle");
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var make = await _vehicleMakeService.GetMakeByNameAsync(modelDTO.MakeName);
+                var make = await _vehicleMakeService.GetMakeByIdAsync((int)modelDTO.MakeId);
                 if (make == null)
                 {
                     ModelState.AddModelError("", "Invalid make name.");
                 }
                 else
                 {
-                    modelDTO.MakeName = make.Name;
                     var result = await _vehicleModelService.UpdateModelAsync(modelDTO);
                     if (result)
                     {
@@ -109,12 +140,15 @@ namespace MVC.Controllers
             }
 
             var modelsDTO = await _vehicleModelService.GetModelsAsync();
-            return View("Index",modelsDTO);
-
+            return View("Index", modelsDTO);
         }
     
 
-    [HttpPost]
+
+
+
+
+        [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
             var deleted = await _vehicleModelService.DeleteModelAsync(id);
@@ -129,18 +163,22 @@ namespace MVC.Controllers
         {
             _logger.LogInformation("Create view");
 
+            var makes = await _vehicleMakeService.GetAllMakesAsync();
+
+            ViewBag.Makes = new SelectList(makes, "Id", "Name");
+
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddModel(VehicleModelDTO modelDTO)
+        public async Task<IActionResult> AddModel(CreateVehicleModelDTO modelDTO)
         {
             if (!ModelState.IsValid)
             {
                 return View(modelDTO);
             }
             var makeListDtos = await _vehicleModelService.AddModelAsync(modelDTO);
-            return View("Index", makeListDtos);
+            return RedirectToAction("Index","VehicleModel");
 
         }
 

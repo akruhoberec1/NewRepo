@@ -12,6 +12,7 @@ namespace Service.Models
     public class VehicleModel : BaseEntity
     {
 
+
         public int MakeId { get; set; }
         [ForeignKey("MakeId")]
         [JsonIgnore]

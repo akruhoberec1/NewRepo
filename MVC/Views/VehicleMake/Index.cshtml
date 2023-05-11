@@ -2,7 +2,7 @@
 @model IEnumerable<VehicleMakeDTO>
 
 <h1>Vehicle Makes</h1>
-
+<div asp-validation-summary="All" class="text-danger"></div>
 <a asp-controller="VehicleMake" asp-action="Create" class="btn btn-primary">Create</a>
 
 <table class="table">

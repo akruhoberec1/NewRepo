@@ -11,9 +11,10 @@ namespace Service.Service.IService
     {
         Task<IEnumerable<VehicleModelDTO>> GetModelsAsync();
         Task<VehicleModelDTO> GetModelById(int id);
-        //ovaj int nije potreban -> id iz DTO modela
-        Task<IEnumerable<VehicleModelDTO>> AddModelAsync(VehicleModelDTO modelDTO);
+        Task<IEnumerable<VehicleModelDTO>> AddModelAsync(CreateVehicleModelDTO modelDTO);
         Task<bool> UpdateModelAsync(VehicleModelDTO modelDTO);
         Task<bool> DeleteModelAsync(int id);
+        Task<IEnumerable<VehicleModelDTO>> GetModelsByMakeNameAsync(string makeName = null);
+        Task<bool> CountModelsByMakeIdAsync(int makeId);
     }
 }

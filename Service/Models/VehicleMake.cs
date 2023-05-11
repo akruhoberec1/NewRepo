@@ -19,8 +19,5 @@ namespace Service.Models
 
         [JsonIgnore]
         public virtual ICollection<VehicleModel> VehicleModels { get; set; }
-
-        
-
     }
 }

@@ -23,14 +23,40 @@ namespace MVC.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? pageNumber, int? pageSize, string searchQuery, string sortBy, string sortOrder)
         {
-            _logger.LogInformation("Index view");
-            var makes = await _vehicleMakeService.GetAllMakesAsync();
-            //var makeVMs = _mapper.Map<List<VehicleMakeVM>>(makes);
-            //viewModel bi trebao biti isto što i DTO pa nije potrebno mapiranje?!
+            pageNumber ??= 1;
+            pageSize ??= 5;
 
-            return View(makes);
+            // set default sorting options if not provided
+            sortBy ??= "Name";
+            sortOrder ??= "asc";
+
+            // get list of makes from service
+            var makes = await _vehicleMakeService.FindMakesAsync(searchQuery, pageSize.Value, pageNumber.Value, sortBy, sortOrder);
+
+            // set ViewData for page size and sorting options
+            ViewData["PageSize"] = pageSize;
+            ViewData["SearchQuery"] = searchQuery;
+            ViewData["SortBy"] = sortBy;
+            ViewData["SortOrder"] = sortOrder;
+
+            // map DTOs to view models
+            var makesVM = new List<VehicleMakeVM>();
+
+            foreach (var m in makes)
+            {
+                var makeVM = new VehicleMakeVM
+                {
+                    Id = m.Id,
+                    Name = m.Name,
+                    Abrv = m.Abrv
+                };
+
+                makesVM.Add(makeVM);
+            }
+
+            return View(makesVM);
         }
 
         [HttpGet]

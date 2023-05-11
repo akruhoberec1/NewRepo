@@ -9,7 +9,7 @@ namespace Service.Service.IService
 {
     public interface IVehicleMake
     {
-        
+
         Task<IEnumerable<VehicleMakeDTO>> GetAllMakesAsync();
         Task<VehicleMakeDTO> GetMakeByIdAsync(int id);
         //ovaj int nije potreban -> id vaditi iz VehicleMakeDTO modela
@@ -17,5 +17,6 @@ namespace Service.Service.IService
         Task<bool> UpdateMakeAsync(VehicleMakeDTO makeDto);
         Task<bool> DeleteMakeAsync(int id);
         //Task<VehicleMakeDTO> GetMakeByIdAsync(string makeName);
+        Task<IEnumerable<VehicleMakeDTO>> FindMakesAsync(string searchQuery, int pageNum, int pageSize, string sortBy, string sortOrder);
     }
 }

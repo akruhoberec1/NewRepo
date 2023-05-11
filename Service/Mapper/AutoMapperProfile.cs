@@ -19,8 +19,8 @@ namespace Service.Mapper
             ////CreateMap<IEnumerable<VehicleMake>, IEnumerable<VehicleMakeDTO>>().ReverseMap();
             CreateMap<VehicleModel, VehicleModelDTO>()
                 .ForMember(dest => dest.MakeName, opt => opt.MapFrom(src => src.VehicleMake.Name));
-            CreateMap<VehicleModelDTO, VehicleModel>(); 
+   
         }
 
     }
-}
+} 

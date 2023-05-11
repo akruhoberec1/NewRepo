@@ -23,22 +23,30 @@ namespace MVC.Controllers
             _mapper = mapper;
         }
 
+
+
         [HttpGet]
         public async Task<IActionResult> Index()
         {
             _logger.LogInformation("Index view");
             var models = await _vehicleModelService.GetModelsAsync();
 
-            foreach (var model in models)
-            {
-                var make = await _vehicleMakeService.GetMakeByNameAsync(model.MakeName);    
-                model.MakeName = make.Name; 
-            }
-
             return View(models);
         }
 
-            [HttpGet]
+        [HttpGet]
+        public async Task<IActionResult> Index1()
+        {
+            var modelsDTO = await _vehicleModelService.GetModelsAsync();
+            if (!string.IsNullOrEmpty(MakeName))
+            {
+                modelsDTO = modelsDTO.Where(m => m.MakeName.ToLower().Contains(MakeName.ToLower()));
+            }
+            return View(modelsDTO);
+        }
+      
+
+        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
             _logger.LogInformation("Edit view");
@@ -50,6 +58,7 @@ namespace MVC.Controllers
             {
                 Text = m.Name,
                 Value = m.Id.ToString()
+  
             });
 
             return View(model);
@@ -75,6 +84,8 @@ namespace MVC.Controllers
 
         public async Task<IActionResult> Update(VehicleModelDTO modelDTO)
         {
+            _logger.LogInformation("Updating vehicle");
+
             if (ModelState.IsValid)
             {
                 var make = await _vehicleMakeService.GetMakeByNameAsync(modelDTO.MakeName);
@@ -96,10 +107,11 @@ namespace MVC.Controllers
                     }
                 }
             }
-            ViewBag.Makes = new SelectList(await _vehicleMakeService.GetAllMakesAsync(), "Name", "Name");
-            return View("Edit", modelDTO);
-        }
 
+            var modelsDTO = await _vehicleModelService.GetModelsAsync();
+            return View("Index",modelsDTO);
+
+        }
     
 
     [HttpPost]

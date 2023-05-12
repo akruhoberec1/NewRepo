@@ -42,6 +42,25 @@ namespace Service.Service
             return makeListDtos;
         }
 
+        public async Task<IEnumerable<VehicleMakeDTO>> GetSortedMakesAsync(string sortOrder)
+        {
+            var makes = await GetAllMakesAsync();
+
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    makes = makes.OrderByDescending(m => m.Name);
+                    break;
+                case "abrv_desc":
+                    makes = makes.OrderByDescending(m => m.Abrv);
+                    break;
+                default:
+                    makes = makes.OrderBy(m => m.Name);
+                    break;
+            }
+
+            return makes;
+        }
 
 
         public async Task<VehicleMakeDTO> GetMakeByIdAsync(int id)

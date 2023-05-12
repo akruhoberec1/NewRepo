@@ -41,6 +41,36 @@ namespace Service.Service
             return modelListDtos;
         }
 
+        public async Task<IEnumerable<VehicleModelDTO>> GetSortedModelsAsync(string sortOrder,string searchString)
+        {
+            var models = await GetModelsAsync();
+
+            searchString = searchString?.ToLower();
+
+            if(!String.IsNullOrEmpty(searchString)) 
+            { 
+                models = models.Where(m => m.Name.ToLower().Contains(searchString) || m.Abrv.ToLower().Contains(searchString) || m.MakeName.ToLower().Contains(searchString));
+            }
+
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    models = models.OrderByDescending(m => m.Name);
+                    break;
+                case "abrv_desc":
+                    models = models.OrderByDescending(m => m.Abrv);
+                    break;
+                case "make_desc":
+                    models = models.OrderByDescending(m => m.MakeName);
+                    break;
+                default:
+                    models = models.OrderBy(m => m.Name);
+                    break;
+            }
+
+            return models;
+        }
+
         public async Task<IEnumerable<VehicleModelDTO>> AddModelAsync(CreateVehicleModelDTO modelDTO)
         {
             var model = _mapper.Map<VehicleModel>(modelDTO);

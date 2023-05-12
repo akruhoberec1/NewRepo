@@ -1,16 +1,24 @@
 ﻿@model List<MVC.Models.VehicleMakeVM>
 
 <h1>Vehicle Makes</h1>
-<div asp-validation-summary="All" class="text-danger"></div>
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<br />
 
+
+
+<br />
 <a asp-controller="VehicleMake" asp-action="Create" class="btn btn-primary">Create</a>
 
 <table class="table">
     <thead>
         <tr>
             <th>Id</th>
-            <th>Name</th>
-            <th>Abbreviation</th>
+            <th>
+            <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]">@Html.DisplayNameFor(model => model.FirstOrDefault().Name)</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["AbrvSortParm"]">@Html.DisplayNameFor(model => model.FirstOrDefault().Abrv)</a>
+            </th>
             <th>Action</th>
         </tr>
     </thead>

@@ -31,7 +31,7 @@ namespace Service.Service
         //GET ALL
         public async Task<IEnumerable<VehicleMakeDTO>> GetAllMakesAsync()
         {
-          
+
             _logger.LogInformation("Getting all vehicle makes.");
 
             var makes = await _context.VehicleMakes.ToListAsync();
@@ -41,6 +41,9 @@ namespace Service.Service
 
             return makeListDtos;
         }
+
+
+
         public async Task<VehicleMakeDTO> GetMakeByIdAsync(int id)
         {
             var make = await _context.VehicleMakes.FindAsync(id);
@@ -83,12 +86,37 @@ namespace Service.Service
             return deletedMake > 0;
         }
 
-        //public async Task<VehicleMakeDTO> GetMakeByIdAsync(string makeName)
-        //{
-        //    var make = await _context.VehicleMakes
-        //        .SingleOrDefaultAsync(m => m.Name == makeName);
-        //    return _mapper.Map<VehicleMakeDTO>(make);
-        //}
+        public async Task<(IEnumerable<VehicleMakeDTO>makes,int totalCount)> FindMakesAsync(string searchQuery, int pageNum, int pageSize, string sortBy, string sortOrder)
+        {
+            _logger.LogInformation("Getting all vehicle makes.");
+
+            var makesQuery = _context.VehicleMakes.AsQueryable();
+            var totalCount = await makesQuery.CountAsync();
+
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                makesQuery = makesQuery.Where(m => m.Name.Contains(searchQuery) || m.Abrv.Contains(searchQuery));
+            }
+
+            switch (sortBy)
+            {
+                case "Name":
+                    makesQuery = sortOrder == "asc" ? makesQuery.OrderBy(m => m.Name) : makesQuery.OrderByDescending(m => m.Name);
+                    break;
+                case "Abrv":
+                    makesQuery = sortOrder == "asc" ? makesQuery.OrderBy(m => m.Abrv) : makesQuery.OrderByDescending(m => m.Abrv);
+                    break;
+                default:
+                    makesQuery = sortOrder == "asc" ? makesQuery.OrderBy(m => m.Id) : makesQuery.OrderByDescending(m => m.Id);
+                    break;
+            }
+
+            var makes = await makesQuery.Skip((pageNum - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            var makeListDtos = makes.Select(m => _mapper.Map<VehicleMakeDTO>(m));
+
+            return (makeListDtos, totalCount);
+        }
 
     }
 }

@@ -1,0 +1,92 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers;
+@model PaginatedList<VehicleMakeVM>
+
+<h1>Vehicle Makes</h1>
+
+<form asp-action="Index" method="get">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" name="searchQuery" placeholder="Search" value="@ViewData["SearchQuery"]" />
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit">Search</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group row">
+                <label class="col-md-4 col-form-label text-md-right">Page Size:</label>
+                <div class="col-md-8">
+                    <select name="pageSize" onchange="this.form.submit()" class="form-control">
+                        <option value="5" selected="@(ViewData["PageSize"].ToString() == "5" ? "selected" : "")">5</option>
+                        <option value="10" selected="@(ViewData["PageSize"].ToString() == "10" ? "selected" : "" )">10</option>
+                        <option value="20"selected="@(ViewData["PageSize"].ToString() == "20" ? "selected" : "")">20</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <select id="sortOrder" name="sortOrder" class="form-select" onchange="this.form.submit()">
+                    <option value="asc" selected="@(ViewData["SortOrder"].ToString() == "asc" ? "selected" : "")">Ascending</option>
+                    <option value="desc" selected="@(ViewData["SortOrder"].ToString() == "desc" ? "selected" : "")">Descending</option>
+                </select>
+            </th>
+            <th>
+                <select id="sortOrder" name="sortOrder" class="form-select" onchange="this.form.submit()">
+                    <option value="asc" selected="@(ViewData["SortOrder"].ToString() == "asc" ? "selected" : "")">Ascending</option>
+                    <option value="desc" selected="@(ViewData["SortOrder"].ToString() == "desc" ? "selected" : "")">Descending</option>
+                </select>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var make in Model.Items)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(m => make.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(m => make.Abrv)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@make.Id">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@make.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<nav>
+    <ul class="pagination">
+        <li class="page-item @(Model.PageNum == 0 ? "disabled" : "")">
+            <a class="page-link" href="@Url.Action("Index","VehicleMake", new { PageNumber = Model.PageNum - 1, PageSize = Model.PageSize, SearchQuery = ViewData["SearchQuery"], SortBy = ViewData["SortBy"], SortOrder = ViewData["SortOrder"] })">
+                Previous
+            </a>
+        </li>
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            if (i == Model.PageNum + 1)
+            {
+                <li class="page-item active"><span class="page-link">@i</span></li>
+            }
+            else
+            {
+                <li class="page-item"><a class="page-link" href="@Url.Action("Index","VehicleMake", new { PageNumber = i - 1, PageSize = Model.PageSize, SearchQuery = ViewData["SearchQuery"], SortBy = ViewData["SortBy"], SortOrder = ViewData["SortOrder"] })">@i</a></li>
+            }
+        }
+        <li class="page-item @(Model.PageNum == Model.TotalPages - 1 ? "disabled" : "")">
+            <a class="page-link" href="@Url.Action("Index","VehicleMake", new { PageNumber = Model.PageNum + 1, PageSize = Model.PageSize, SearchQuery = ViewData["SearchQuery"], SortBy = ViewData["SortBy"], SortOrder = ViewData["SortOrder"] })">
+                Next
+            </a>
+        </li>
+    </ul>
+</nav>

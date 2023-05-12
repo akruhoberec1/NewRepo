@@ -1,15 +1,8 @@
-﻿@using Service.Models.DTOs;
-@model IEnumerable<VehicleMakeDTO>
+﻿@model List<MVC.Models.VehicleMakeVM>
 
 <h1>Vehicle Makes</h1>
 <div asp-validation-summary="All" class="text-danger"></div>
-<br/>
-<form method="get" asp-controller="VehicleMake" asp-action="Index">
-    <label>Page Size:</label>
-    <input type="number" name="pageSize" value="@ViewData["PageSize"]" min="1" max="100" />
-    <button type="submit">Update</button>
-</form>
-<br/>
+
 <a asp-controller="VehicleMake" asp-action="Create" class="btn btn-primary">Create</a>
 
 <table class="table">

@@ -18,7 +18,7 @@ namespace MVC.Controllers
             _logger = logger;
             _vehicleMakeService = vehicleMakeService;
             _mapper = mapper;
-            _vehicleModelService = vehicleModelService; 
+            _vehicleModelService = vehicleModelService;
 
         }
 
@@ -27,10 +27,15 @@ namespace MVC.Controllers
         {
             _logger.LogInformation("Index view");
             var makes = await _vehicleMakeService.GetAllMakesAsync();
-            //var makeVMs = _mapper.Map<List<VehicleMakeVM>>(makes);
-            //viewModel bi trebao biti isto što i DTO pa nije potrebno mapiranje?!
 
-            return View(makes);
+            var makesVM = makes.Select(m => new VehicleMakeVM
+            {
+                Id = m.Id,
+                Name = m.Name,
+                Abrv = m.Abrv
+            }).ToList();
+
+            return View(makesVM);
         }
 
         [HttpGet]
@@ -78,11 +83,17 @@ namespace MVC.Controllers
             {
                 ModelState.AddModelError("", "Cannot delete make that has it's own models!");
                 var makes = await _vehicleMakeService.GetAllMakesAsync();
-                return View("Index", makes);
+                var makesVM = makes.Select(m => new VehicleMakeVM
+                {
+                    Id = m.Id,
+                    Name = m.Name,
+                    Abrv = m.Abrv
+                }).ToList();
+                return View("Index", makesVM);
             }
 
             var deleted = await _vehicleMakeService.DeleteMakeAsync(id);
-            
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -94,16 +105,83 @@ namespace MVC.Controllers
             return View();
         }
 
-            [HttpPost]
+        [HttpPost]
         public async Task<IActionResult> AddMake(VehicleMakeDTO makeDTO)
         {
-            if(!ModelState.IsValid) 
+            if (!ModelState.IsValid)
             {
                 return View(makeDTO);
             }
-                var makeListDtos = await _vehicleMakeService.AddMakeAsync(makeDTO);
-                return View("Index", makeListDtos);
-            
+
+            var makeListDTOs = await _vehicleMakeService.AddMakeAsync(makeDTO);
+            var makeListVMs = makeListDTOs.Select(m => new VehicleMakeVM
+            {
+                Id = m.Id,
+                Name = m.Name,
+                Abrv = m.Abrv
+            }).ToList();
+
+            return View("Index", makeListVMs);
+
         }
     }
 }
+
+
+
+
+
+//prvi pokušaji pretraživanja, sortiranja i filtriranja, idući put redom, ne odjednom
+
+//public async Task<IActionResult> Index(int? pageNum, int? pageSize, string searchQuery, string sortBy, string sortOrder)
+//{
+//    pageNum ??= 1;
+//    pageSize ??= 5;
+
+
+//    sortBy ??= "Name";
+//    sortOrder ??= "asc";
+
+
+//    var (makes, totalCount) = await _vehicleMakeService.FindMakesAsync(searchQuery, pageSize.Value, pageNum.Value, sortBy, sortOrder);
+
+
+//    ViewData["PageSize"] = pageSize;
+//    ViewData["SearchQuery"] = searchQuery;
+//    ViewData["SortBy"] = sortBy;
+//    ViewData["SortOrder"] = sortOrder;
+//    ViewData["TotalCount"] = totalCount;
+
+
+//    var makesVM = new List<VehicleMakeVM>();
+
+//    foreach (var m in makesVM)
+//    {
+//        var makeVM = new VehicleMakeVM
+//        {
+//            Id = m.Id,
+//            Name = m.Name,
+//            Abrv = m.Abrv,
+//            //SortOrder = sortOrder,
+//            //PageSize = pageSize.Value,
+//        };
+
+//        makesVM.Add(makeVM);
+//    }
+
+//    switch (sortBy.ToLower())
+//    {
+//        case "name":
+//            makesVM = sortOrder.ToLower() == "asc" ? makesVM.OrderBy(m => m.Name).ToList() : makesVM.OrderByDescending(m => m.Name).ToList();
+//            break;
+//        case "abrv":
+//            makesVM = sortOrder.ToLower() == "asc" ? makesVM.OrderBy(m => m.Abrv).ToList() : makesVM.OrderByDescending(m => m.Abrv).ToList();
+//            break;
+//        case "id":
+//            makesVM = sortOrder.ToLower() == "asc" ? makesVM.OrderBy(m => m.Id).ToList() : makesVM.OrderByDescending(m => m.Id).ToList();
+//            break;
+//    }
+
+//    var paginatedMakesVM = new PaginatedList<VehicleMakeVM>(makesVM,totalCount, pageNum.Value, pageSize.Value);
+//    return View(paginatedMakesVM);
+//}

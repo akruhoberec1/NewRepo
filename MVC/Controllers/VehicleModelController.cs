@@ -51,17 +51,6 @@ namespace MVC.Controllers
 
                 return View(models);
 
-
-            //_logger.LogInformation("Index view");
-            //var models = await _vehicleModelService.GetModelsAsync();
-
-            //return View(models);
-            ////var modelsDTO = await _vehicleModelService.GetModelsAsync();
-            //////if (!string.IsNullOrEmpty(MakeName))
-            //////{
-            //////    modelsDTO = modelsDTO.Where(m => m.MakeName.ToLower().Contains(MakeName.ToLower()));
-            //////}
-            ////return View(modelsDTO);
         }
 
         

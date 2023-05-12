@@ -42,17 +42,34 @@ namespace Service.Service
             return makeListDtos;
         }
 
-        public async Task<IEnumerable<VehicleMakeDTO>> GetSortedMakesAsync(string sortOrder)
+        public async Task<IEnumerable<VehicleMakeDTO>> GetSortedMakesAsync(string sortOrder, string searchString)
         {
             var makes = await GetAllMakesAsync();
 
+            searchString = searchString?.ToLower();
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                makes = makes.Where(m => m.Name.ToLower().Contains(searchString) || m.Abrv.ToLower().Contains(searchString));
+            }
+
+
             switch (sortOrder)
             {
+                case "id_asc":
+                    makes = makes.OrderBy(m => m.Id);
+                    break;
+                case "id_desc":
+                    makes = makes.OrderByDescending(m => m.Id);
+                    break;
                 case "name_desc":
                     makes = makes.OrderByDescending(m => m.Name);
                     break;
                 case "abrv_desc":
                     makes = makes.OrderByDescending(m => m.Abrv);
+                    break;
+                case "abrv_asc":
+                    makes = makes.OrderBy(m => m.Abrv);
                     break;
                 default:
                     makes = makes.OrderBy(m => m.Name);

@@ -19,6 +19,6 @@ namespace Service.Service.IService
         Task<bool> DeleteMakeAsync(int id);
         //Task<VehicleMakeDTO> GetMakeByIdAsync(string makeName);
         Task<(IEnumerable<VehicleMakeDTO>makes,int totalCount)> FindMakesAsync(string searchQuery, int pageNum, int pageSize, string sortBy, string sortOrder);
-        Task<IEnumerable<VehicleMakeDTO>> GetSortedMakesAsync(string sortOrder);
+        Task<IEnumerable<VehicleMakeDTO>> GetSortedMakesAsync(string sortOrder, string searchString);
     }
 }

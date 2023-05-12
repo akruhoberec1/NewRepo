@@ -23,10 +23,10 @@ namespace MVC.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string sortOrder)
+        public async Task<IActionResult> Index(string sortOrder, string searchString)
         {
             _logger.LogInformation("Index view");
-            var makes = await _vehicleMakeService.GetSortedMakesAsync(sortOrder);
+            var makes = await _vehicleMakeService.GetSortedMakesAsync(sortOrder, searchString);
 
             var makesVM = makes.Select(m => new VehicleMakeVM
             {
@@ -35,9 +35,11 @@ namespace MVC.Controllers
                 Abrv = m.Abrv
             }).ToList();
 
+            ViewData["IdSortParm"] = sortOrder == "id_asc" ? "id_desc" : "id_asc";
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-            ViewData["AbrvSortParm"] = String.IsNullOrEmpty(sortOrder) ? "abrv_desc" : "";
- 
+            ViewData["AbrvSortParm"] = sortOrder == "abrv_asc" ? "abrv_desc" : "abrv_asc";
+            ViewData["CurrentFilter"] = searchString;
+            ViewData["SortOrder"] = sortOrder;
 
             return View(makesVM);
         }

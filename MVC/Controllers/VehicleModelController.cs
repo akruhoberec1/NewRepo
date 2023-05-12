@@ -28,12 +28,26 @@ namespace MVC.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder, string searchString)
         {
             _logger.LogInformation("Index view");
-            var models = await _vehicleModelService.GetModelsAsync();
+            var models = await _vehicleModelService.GetSortedModelsAsync(sortOrder, searchString);
 
-            return View(models);
+            var modelsVM = models.Select(m => new VehicleModelVM
+            {
+                Id = m.Id,
+                Name = m.Name,
+                Abrv = m.Abrv,
+                MakeName = m.MakeName,  
+            }).ToList();
+
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["AbrvSortParm"] = String.IsNullOrEmpty(sortOrder) ? "abrv_desc" : "";
+            ViewData["MakeSortParm"] = String.IsNullOrEmpty(sortOrder) ? "make_desc" : "";
+            ViewData["CurrentFilter"] = searchString;
+
+
+            return View(modelsVM);
         }
 
 
@@ -80,7 +94,7 @@ namespace MVC.Controllers
 
 
 
-        [HttpPost]
+        //[HttpPost]
         //public async Task<IActionResult> Update(VehicleModelDTO modelDTO)
         //{
         //    if (ModelState.IsValid)

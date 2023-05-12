@@ -1,4 +1,5 @@
-﻿using Service.Models.DTOs;
+﻿using Service.Models;
+using Service.Models.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,5 +19,6 @@ namespace Service.Service.IService
         Task<bool> DeleteMakeAsync(int id);
         //Task<VehicleMakeDTO> GetMakeByIdAsync(string makeName);
         Task<(IEnumerable<VehicleMakeDTO>makes,int totalCount)> FindMakesAsync(string searchQuery, int pageNum, int pageSize, string sortBy, string sortOrder);
+        Task<IEnumerable<VehicleMakeDTO>> GetSortedMakesAsync(string sortOrder);
     }
 }

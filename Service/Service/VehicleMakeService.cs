@@ -86,11 +86,12 @@ namespace Service.Service
             return deletedMake > 0;
         }
 
-        public async Task<IEnumerable<VehicleMakeDTO>> FindMakesAsync(string searchQuery, int pageNum, int pageSize, string sortBy, string sortOrder)
+        public async Task<(IEnumerable<VehicleMakeDTO>makes,int totalCount)> FindMakesAsync(string searchQuery, int pageNum, int pageSize, string sortBy, string sortOrder)
         {
             _logger.LogInformation("Getting all vehicle makes.");
 
             var makesQuery = _context.VehicleMakes.AsQueryable();
+            var totalCount = await makesQuery.CountAsync();
 
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
@@ -110,11 +111,11 @@ namespace Service.Service
                     break;
             }
 
-            var makes = await makesQuery.Skip((pageNum - 1) * pageSize).Take(pageNum).ToListAsync();
+            var makes = await makesQuery.Skip((pageNum - 1) * pageSize).Take(pageSize).ToListAsync();
 
             var makeListDtos = makes.Select(m => _mapper.Map<VehicleMakeDTO>(m));
 
-            return makeListDtos;
+            return (makeListDtos, totalCount);
         }
 
     }

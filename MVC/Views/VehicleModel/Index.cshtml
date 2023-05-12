@@ -1,4 +1,8 @@
 ﻿@model List<MVC.Models.VehicleModelVM>
+@{
+    var sortOrder = ViewData["sortOrder"] as string;
+}
+
 
 <h1>Vehicle Models Admin View</h1>
 <br />
@@ -20,9 +24,12 @@
 <table class="table">
     <thead>
         <tr>
-            <th>Id</th>
             <th>
-            <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]">@Html.DisplayNameFor(model => model.FirstOrDefault().Name)</a>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["IdSortParm"]">@Html.DisplayNameFor(model => model.FirstOrDefault().Id)</a>
+            </th>
+
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]">@Html.DisplayNameFor(model => model.FirstOrDefault().Name)</a>
             </th>
             <th>
                 <a asp-action="Index" asp-route-sortOrder="@ViewData["AbrvSortParm"]">@Html.DisplayNameFor(model => model.FirstOrDefault().Abrv)</a>

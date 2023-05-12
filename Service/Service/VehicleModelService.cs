@@ -54,14 +54,26 @@ namespace Service.Service
 
             switch (sortOrder)
             {
+                case "id_asc":
+                    models = models.OrderBy(m => m.Id);
+                    break;
+                case "id_desc":
+                    models = models.OrderByDescending(m => m.Id);
+                    break;
                 case "name_desc":
                     models = models.OrderByDescending(m => m.Name);
                     break;
                 case "abrv_desc":
                     models = models.OrderByDescending(m => m.Abrv);
                     break;
+                case "abrv_asc":
+                    models = models.OrderBy(m => m.Abrv);
+                    break;
                 case "make_desc":
                     models = models.OrderByDescending(m => m.MakeName);
+                    break;
+                case "make_asc":
+                    models = models.OrderBy(m => m.MakeName);
                     break;
                 default:
                     models = models.OrderBy(m => m.Name);

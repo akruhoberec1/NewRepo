@@ -41,10 +41,12 @@ namespace MVC.Controllers
                 MakeName = m.MakeName,  
             }).ToList();
 
+            ViewData["IdSortParm"] = sortOrder == "id_asc" ? "id_desc" : "id_asc";
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-            ViewData["AbrvSortParm"] = String.IsNullOrEmpty(sortOrder) ? "abrv_desc" : "";
-            ViewData["MakeSortParm"] = String.IsNullOrEmpty(sortOrder) ? "make_desc" : "";
+            ViewData["AbrvSortParm"] = sortOrder == "abrv_asc" ? "abrv_desc" : "abrv_asc";
+            ViewData["MakeSortParm"] = sortOrder == "make_asc" ? "make_desc" : "make_asc";
             ViewData["CurrentFilter"] = searchString;
+            ViewData["sortOrder"] = sortOrder;
 
 
             return View(modelsVM);

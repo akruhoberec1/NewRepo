@@ -87,19 +87,19 @@
         @if (Model.HasPrevious)
         {
             <li class="page-item">
-                <a class="page-link" href="@Url.Action("Index", new { sortOrder = ViewBag.SortOrder, searchString = ViewBag.CurrentFilter, pageNumber = Model.PageIndex - 1, pageSize = Model.PageSize })">Previous</a>
+                <a class="page-link" href="@Url.Action("Index", new { sortOrder = ViewBag.SortOrder, searchString = ViewBag.CurrentFilter, pageNumber = Model.PageIndex - 1, pageSize = Model.PageSize > 0 ? Model.PageSize : (int?)null }) ">Previous</a>
             </li>
         }
         @for (int i = 1; i <= Model.TotalPages; i++)
         {
             <li class="page-item @(i == Model.PageIndex ? "active" : "")">
-                <a class="page-link" href="@Url.Action("Index", new { sortOrder = ViewBag.SortOrder, searchString = ViewBag.CurrentFilter, pageNumber = i, pageSize = Model.PageSize })">@i</a>
+                <a class="page-link" href="@Url.Action("Index", new { sortOrder = ViewBag.SortOrder, searchString = ViewBag.CurrentFilter, pageNumber = i, pageSize = Model.PageSize > 0 ? Model.PageSize : (int?)null })">@i</a>
             </li>
         }
         @if (Model.HasNext)
         {
             <li class="page-item">
-                <a class="page-link" href="@Url.Action("Index", new { sortOrder = ViewBag.SortOrder, searchString = ViewBag.CurrentFilter, pageNumber = Model.PageIndex + 1, pageSize = Model.PageSize })">Next</a>
+                <a class="page-link" href="@Url.Action("Index", new { sortOrder = ViewBag.SortOrder, searchString = ViewBag.CurrentFilter, pageNumber = Model.PageIndex + 1, pageSize = Model.PageSize > 0 ? Model.PageSize : (int?)null }) ">Next</a>
             </li>
         }
     </ul>

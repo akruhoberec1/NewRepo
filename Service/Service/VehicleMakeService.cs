@@ -1,17 +1,10 @@
 ﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Service.Data;
 using Service.Models;
 using Service.Models.DTOs;
 using Service.Service.IService;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Service.Service
 {
@@ -42,7 +35,7 @@ namespace Service.Service
             return makeListDtos;
         }
 
-        public async Task<IEnumerable<VehicleMakeDTO>> GetSortedMakesAsync(string sortOrder, string searchString)
+        public async Task<IEnumerable<VehicleMakeDTO>> GetSortedMakesAsync(string sortOrder, string searchString, int pageSize, int? pageNumber)
         {
             var makes = await GetAllMakesAsync();
 
@@ -75,6 +68,7 @@ namespace Service.Service
                     makes = makes.OrderBy(m => m.Name);
                     break;
             }
+
 
             return makes;
         }

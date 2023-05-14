@@ -14,8 +14,8 @@ namespace Service.Service.IService
         Task<IEnumerable<VehicleModelDTO>> AddModelAsync(CreateVehicleModelDTO modelDTO);
         Task<bool> UpdateModelAsync(VehicleModelDTO modelDTO);
         Task<bool> DeleteModelAsync(int id);
-        Task<IEnumerable<VehicleModelDTO>> GetModelsByMakeNameAsync(string makeName = null);
+        Task<List<VehicleModelDTO>> GetModelsByMakeNameAsync(int pageSize, int? pageNumber, string makeName = null);
         Task<bool> CountModelsByMakeIdAsync(int makeId);
-        Task<IEnumerable<VehicleModelDTO>> GetSortedModelsAsync(string sortOrder, string searchString);
+        Task<IEnumerable<VehicleModelDTO>> GetSortedModelsAsync(string sortOrder, string searchString, int pageSize, int? pageNumber);
     }
 }

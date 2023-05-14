@@ -28,10 +28,10 @@ namespace MVC.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> Index(string sortOrder, string searchString)
+        public async Task<IActionResult> Index(string sortOrder, string searchString, int pageSize = 5, int? pageNumber = 1)
         {
             _logger.LogInformation("Index view");
-            var models = await _vehicleModelService.GetSortedModelsAsync(sortOrder, searchString);
+            var models = await _vehicleModelService.GetSortedModelsAsync(sortOrder, searchString, pageSize, pageNumber);
 
             var modelsVM = models.Select(m => new VehicleModelVM
             {
@@ -49,7 +49,7 @@ namespace MVC.Controllers
             ViewData["sortOrder"] = sortOrder;
 
 
-            return View(modelsVM);
+            return View(PaginatedList<VehicleModelVM>.Create(modelsVM, pageNumber ?? 1, pageSize));
         }
 
 
@@ -58,18 +58,26 @@ namespace MVC.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> Index1(string makeName)
+        public async Task<IActionResult> Index1(int pageSize = 5, int? pageNumber = 1, string makeName = null)
         {
  
                 _logger.LogInformation("Index view");
 
-                var models = await _vehicleModelService.GetModelsByMakeNameAsync(makeName);
+                var models = await _vehicleModelService.GetModelsByMakeNameAsync(pageSize, pageNumber, makeName);
 
-                return View(models);
+                var modelsVM = models.Select(m => new VehicleModelVM
+                {
+                    Id = m.Id,
+                    Name = m.Name,
+                    Abrv = m.Abrv,
+                    MakeName = m.MakeName,
+                }).ToList();
+
+            return View(PaginatedList<VehicleModelVM>.Create(modelsVM, pageNumber ?? 1, pageSize));
 
         }
 
-        
+
 
 
 
@@ -85,36 +93,11 @@ namespace MVC.Controllers
             {
                 Text = m.Name,
                 Value = m.Id.ToString()
-  
+
             });
 
             return View(model);
         }
-
-
-
-
-
-
-        //[HttpPost]
-        //public async Task<IActionResult> Update(VehicleModelDTO modelDTO)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var result = await _vehicleModelService.UpdateModelAsync(modelDTO);
-        //        if (result)
-        //        {
-        //            return RedirectToAction("Index", "VehicleModel");
-        //        }
-        //        else
-        //        {
-        //            ModelState.AddModelError("", "Failed to update vehicle make.");
-        //        }
-        //    }
-        //    return View(modelDTO);
-        //}
-
-
 
 
 
@@ -145,7 +128,7 @@ namespace MVC.Controllers
             }
 
             var modelsDTO = await _vehicleModelService.GetModelsAsync();
-            return View("Index", modelsDTO);
+            return RedirectToAction(nameof(Index)); ;
         }
     
 
@@ -180,7 +163,7 @@ namespace MVC.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(modelDTO);
+                return RedirectToAction("Index","VehicleModel");
             }
             var makeListDtos = await _vehicleModelService.AddModelAsync(modelDTO);
             return RedirectToAction("Index","VehicleModel");

@@ -1,4 +1,4 @@
-﻿@model List<MVC.Models.VehicleModelVM>
+﻿@model PaginatedList<MVC.Models.VehicleModelVM>
 @{
     var sortOrder = ViewData["sortOrder"] as string;
 }
@@ -8,12 +8,14 @@
 <br />
 
 <a asp-controller="VehicleModel" asp-action="Create" class="btn btn-primary">Create</a>
+<br />
 
 <br />
 <form asp-action="Index" method="get">
     <div class="form-actions no-color">
         <p>
-            Find by any: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
+            Find by any: <br />
+            <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
             <input type="submit" value="Search" class="btn btn-default" /> |
             <a asp-action="Index">Back to Full List</a>
         </p>
@@ -65,3 +67,15 @@
         }
     </tbody>
 </table>
+
+@{
+    var prevDisabled = !Model.HasPrevious ? "disabled" : "";
+    var nextDisabled = !Model.HasNext ? "disabled" : "";
+}
+
+<a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex-1)" class="btn btn-default @prevDisabled">
+    Previous
+</a>
+<a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex+1)" class="btn btn-default @nextDisabled">
+    Next
+</a>

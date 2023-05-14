@@ -1,47 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿
 
 namespace MVC
 {
-    public class PaginatedList<T>
+    public class PaginatedList<T> : List<T> 
     {
-        public int PageNum { get; private set; }
-        public int TotalPages { get; private set; }
-        public int TotalCount { get; private set; }
-        public int PageSize { get; private set; }   
-        public List<T> Items { get; private set; }
-
-        public PaginatedList(List<T> items, int count, int pageNum, int pageSize)
+        public int PageIndex { get; set; }  
+        public int TotalPages { get; set; }
+        public int PageSize { get; set; }   
+        public PaginatedList(List<T> items, int count, int pageIndex, int pageSize) 
         {
-            PageNum = pageNum;
-            TotalPages = (int)Math.Ceiling(count / (double)pageSize);
-            TotalCount = count;
-            Items = items;
-            PageSize = pageSize;
+            PageIndex = pageIndex;  
+            TotalPages = (int)Math.Ceiling(count/(double)pageSize);
+            this.AddRange(items);   
         }
 
-        public bool HasPreviousPage
+        public bool HasPrevious => PageIndex > 1;
+        public bool HasNext => PageIndex < TotalPages;  
+        public static PaginatedList<T> Create (List<T> source, int pageIndex, int pageSize)
         {
-            get
-            {
-                return (PageNum > 1);
-            }
+            var count = source.Count;
+            var items = source.Skip((pageIndex -  1) * pageSize).Take(pageSize).ToList();    
+            return new PaginatedList<T>(items, count, pageIndex, pageSize); 
         }
 
-        public bool HasNextPage
-        {
-            get
-            {
-                return (PageNum < TotalPages);
-            }
-        }
-
-        public static PaginatedList<T> Create(IQueryable<T> source, int pageNum, int pageSize)
-        {
-            var count = source.Count();
-            var items = source.Skip((pageNum - 1) * pageSize).Take(pageSize).ToList();
-            return new PaginatedList<T>(items, count, pageNum, pageSize);
-        }
     }
 }

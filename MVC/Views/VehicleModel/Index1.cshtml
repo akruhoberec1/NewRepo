@@ -1,5 +1,5 @@
-﻿@using Service.Models.DTOs;
-@model IEnumerable<VehicleModelDTO>
+﻿@using MVC;
+@model PaginatedList<VehicleModelVM>
 
 <h1>Vehicles</h1>
 <br />
@@ -11,7 +11,13 @@
         <input type="text" name="MakeName" class="form-control" />
     </div>
     <br />
+
+
+
+
+    <br />
     <button type="submit" class="btn btn-primary">Filter</button>
+
 }
 
 <table class="table">
@@ -31,8 +37,18 @@
                 <td>@mody.Id</td>
                 <td>@mody.Name</td>
                 <td>@mody.Abrv</td>
-                <td>@mody.MakeName</td>         
+                <td>@mody.MakeName</td>
             </tr>
         }
     </tbody>
 </table>
+@{
+    var prevDisabled = !Model.HasPrevious ? "disabled" : "";
+    var nextDisabled = !Model.HasNext ? "disabled" : "";
+}
+<a asp-action="Index1" asp-route-pageNumber="@(Model.PageIndex-1)" class="btn btn-default @prevDisabled">
+    Previous
+</a>
+<a asp-action="Index1" asp-route-pageNumber="@(Model.PageIndex+1)" class="btn btn-default @nextDisabled">
+    Next
+</a>

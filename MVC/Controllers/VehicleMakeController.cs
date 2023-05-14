@@ -23,7 +23,7 @@ namespace MVC.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string sortOrder, string searchString, int pageSize = 5, int? pageNumber = 1)
+        public async Task<IActionResult> Index(string sortOrder, string searchString, int pageSize, int? pageNumber = 1)
         {
             _logger.LogInformation("Index view");
 
@@ -37,11 +37,12 @@ namespace MVC.Controllers
                 Abrv = m.Abrv
             }).ToList();
 
-            ViewData["IdSortParm"] = sortOrder == "id_asc" ? "id_desc" : "id_asc";
-            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-            ViewData["AbrvSortParm"] = sortOrder == "abrv_asc" ? "abrv_desc" : "abrv_asc";
-            ViewData["CurrentFilter"] = searchString;
-            ViewData["SortOrder"] = sortOrder;
+            ViewBag.IdSortParm = sortOrder == "id_asc" ? "id_desc" : "id_asc";
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewBag.AbrvSortParm = sortOrder == "abrv_asc" ? "abrv_desc" : "abrv_asc";
+            ViewBag.CurrentFilter = searchString;
+            ViewBag.SortOrder = sortOrder;
+            ViewBag.PageSize = pageSize;
 
             return View(PaginatedList<VehicleMakeVM>.Create(makesVM, pageNumber ??1, pageSize));
         }

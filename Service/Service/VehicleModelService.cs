@@ -41,7 +41,7 @@ namespace Service.Service
             return modelListDtos;
         }
 
-        public async Task<IEnumerable<VehicleModelDTO>> GetSortedModelsAsync(string sortOrder,string searchString)
+        public async Task<IEnumerable<VehicleModelDTO>> GetSortedModelsAsync(string sortOrder,string searchString, int pageSize, int? pageNumber)
         {
             var models = await GetModelsAsync();
 
@@ -133,7 +133,7 @@ namespace Service.Service
             return updatedModel > 0;
         }
 
-        public async Task<IEnumerable<VehicleModelDTO>> GetModelsByMakeNameAsync(string makeName = null)
+        public async Task<List<VehicleModelDTO>> GetModelsByMakeNameAsync(int pageSize, int? pageNumber, string makeName = null)
         {
             IQueryable<VehicleModel> query = _context.VehicleModels.Include(vm => vm.VehicleMake);
 
@@ -143,7 +143,7 @@ namespace Service.Service
             }
 
             var models = await query.AsNoTracking().ToListAsync();
-            var modelsDTO = _mapper.Map<IEnumerable<VehicleModelDTO>>(models);
+            var modelsDTO = _mapper.Map<List<VehicleModelDTO>>(models);
 
             return modelsDTO;
         }

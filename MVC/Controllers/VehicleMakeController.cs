@@ -23,7 +23,7 @@ namespace MVC.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string sortOrder, string searchString, int pageSize = 5, int? pageNumber = 1)
+        public async Task<IActionResult> Index(string sortOrder, string searchString, int pageSize, int? pageNumber = 1)
         {
             _logger.LogInformation("Index view");
 

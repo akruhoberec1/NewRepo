@@ -1,23 +1,50 @@
-﻿@model PaginatedList<MVC.Models.VehicleModelVM>
+﻿
+@model PaginatedList<MVC.Models.VehicleModelVM>
 @{
     var sortOrder = ViewData["sortOrder"] as string;
+    var pageNumber = Context.Request.Query["pageNumber"];
+    var searchString = Context.Request.Query["searchString"];
+    var pageSize = Context.Request.Query["pageSize"];
 }
 
 
-<h1>Vehicle Models Admin View</h1>
-<br />
 
+<h1>Vehicle Models Admin View</h1>
+
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-danger">
+        @ViewBag.ErrorMessage
+    </div>
+}
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-success">
+        @ViewBag.Message
+    </div>
+}
+
+<br />
 <a asp-controller="VehicleModel" asp-action="Create" class="btn btn-primary">Create</a>
 <br />
-
 <br />
+
+
 <form asp-action="Index" method="get">
     <div class="form-actions no-color">
         <p>
             Find by any: <br />
-            <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
+            <input type="text" name="SearchString" value="@ViewBag.CurrentFilter" />
+            <br />
+            <label for="PageSize" style="display: inline-block; width: 150px;">Results per page:</label>
+            <select name="PageSize" class="form-control" onchange="this.form.submit()" style="width: 100px;">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+            </select>
+
             <input type="submit" value="Search" class="btn btn-default" /> |
-            <a asp-action="Index">Back to Full List</a>
+            <a asp-action="Index">Clear parameters and default page size = 5</a>
         </p>
     </div>
 </form>
@@ -27,17 +54,21 @@
     <thead>
         <tr>
             <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["IdSortParm"]">@Html.DisplayNameFor(model => model.FirstOrDefault().Id)</a>
+                <a asp-action="Index" asp-route-sortOrder="@ViewBag.IdSortParm" asp-route-searchString="@searchString" asp-route-pageNumber="@pageNumber" asp-route-pageSize="@pageSize">
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().Id)</a>
             </th>
 
             <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]">@Html.DisplayNameFor(model => model.FirstOrDefault().Name)</a>
+                <a asp-action="Index" asp-route-sortOrder="@ViewBag.NameSortParm" asp-route-searchString="@searchString" asp-route-pageNumber="@pageNumber" asp-route-pageSize="@pageSize">
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().Name)</a>
             </th>
             <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["AbrvSortParm"]">@Html.DisplayNameFor(model => model.FirstOrDefault().Abrv)</a>
+                <a asp-action="Index" asp-route-sortOrder="@ViewBag.AbrvSortParm" asp-route-searchString="@searchString" asp-route-pageNumber="@pageNumber" asp-route-pageSize="@pageSize">
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().Abrv)</a>
             </th>
             <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["MakeSortParm"]">@Html.DisplayNameFor(model => model.FirstOrDefault().MakeName)</a>
+                <a asp-action="Index" asp-route-sortOrder="@ViewBag.MakeSortParm" asp-route-searchString="@searchString" asp-route-pageNumber="@pageNumber" asp-route-pageSize="@pageSize">
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().MakeName)</a>
             </th>
             <th>Action</th>
         </tr>
@@ -58,6 +89,15 @@
 
 
                     <form asp-controller="VehicleModel" asp-action="Delete" asp-route-id="@mody.Id" method="post" onsubmit="return confirm('You sure?')">
+                        <input type="hidden" name="pageNumber" value="@Model.PageIndex" />
+                        @if (Context.Request.Query.ContainsKey("pageSize"))
+                        {
+                            <input type="hidden" name="pageSize" value="@Context.Request.Query["pageSize"]" />
+                        }
+                        else
+                        {
+                            <input type="hidden" name="pageSize" value="5" />
+                        }
                         <button type="submit">Delete</button>
                     </form>
    
@@ -73,9 +113,34 @@
     var nextDisabled = !Model.HasNext ? "disabled" : "";
 }
 
-<a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex-1)" class="btn btn-default @prevDisabled">
-    Previous
-</a>
-<a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex+1)" class="btn btn-default @nextDisabled">
-    Next
-</a>
+<nav>
+    <ul class="pagination">
+        <li class="page-item @(Model.HasPrevious ? "" : "disabled")">
+            <a class="page-link" href="@Url.Action("Index", new { sortOrder = sortOrder, searchString = searchString, pageNumber = Model.PageIndex - 1, pageSize = pageSize })">Previous</a>
+        </li>
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                <a class="page-link" href="@Url.Action("Index", new { sortOrder = sortOrder, searchString = searchString, pageNumber = i, pageSize = pageSize })">@i</a>
+            </li>
+        }
+        <li class="page-item @(Model.HasNext ? "" : "disabled")">
+            <a class="page-link" href="@Url.Action("Index", new { sortOrder = sortOrder, searchString = searchString, pageNumber = Model.PageIndex + 1, pageSize = pageSize })">Next</a>
+        </li>
+    </ul>
+</nav>
+
+
+
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var pageSize = '@(ViewBag.PageSize)';
+            if (pageSize !== '') {
+                $('select[name="PageSize"]').val(pageSize);
+            }
+        });
+    </script>
+}

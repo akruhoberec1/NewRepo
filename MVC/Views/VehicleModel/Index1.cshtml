@@ -1,7 +1,9 @@
 ﻿@using MVC;
 @model PaginatedList<VehicleModelVM>
 
-<h1>Vehicles</h1>
+<h1>Vehicles Index page</h1>
+<h5>Filter by make only. For other actions, visit Admin views.</h5>
+<br />
 <br />
 
 @using (Html.BeginForm("Index1", "VehicleModel", FormMethod.Get))
@@ -10,11 +12,6 @@
         <label for="MakeName">Filter by Make Name:</label>
         <input type="text" name="MakeName" class="form-control" />
     </div>
-    <br />
-
-
-
-
     <br />
     <button type="submit" class="btn btn-primary">Filter</button>
 

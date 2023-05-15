@@ -44,6 +44,7 @@ namespace MVC.Controllers
             ViewBag.IdSortParm = sortOrder == "id_asc" ? "id_desc" : "id_asc";
             ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewBag.AbrvSortParm = sortOrder == "abrv_asc" ? "abrv_desc" : "abrv_asc";
+            ViewBag.MakeSortParm = sortOrder == "make_asc" ? "make_desc" : "make_asc";
             ViewBag.CurrentFilter = searchString;
             ViewBag.SortOrder = sortOrder;
             ViewBag.PageSize = Request.Query.ContainsKey("pageSize") ? Request.Query["pageSize"].ToString() : "5";

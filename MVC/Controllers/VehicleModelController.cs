@@ -77,6 +77,10 @@ namespace MVC.Controllers
                     MakeName = m.MakeName,
                 }).ToList();
 
+            ViewBag.CurrentFilter = makeName;
+            ViewBag.PageSize = Request.Query.ContainsKey("pageSize") ? Request.Query["pageSize"].ToString() : "5";
+
+
             return View(PaginatedList<VehicleModelVM>.Create(modelsVM, pageNumber ?? 1, pageSize));
 
         }

@@ -1,12 +1,16 @@
 ﻿@using MVC;
 @model PaginatedList<VehicleModelVM>
-
+@{
+    var pageNumber = Context.Request.Query["pageNumber"];
+    var makeName = Context.Request.Query["searchString"];
+    var pageSize = Context.Request.Query["pageSize"];
+}
 <h1>Vehicles Index page</h1>
 <h5>Filter by make only. For other actions, visit Admin views.</h5>
 <br />
 <br />
 
-@using (Html.BeginForm("Index1", "VehicleModel", FormMethod.Get))
+@*@using (Html.BeginForm("Index1", "VehicleModel", FormMethod.Get))
 {
     <div class="form-group">
         <label for="MakeName">Filter by Make Name:</label>
@@ -15,7 +19,28 @@
     <br />
     <button type="submit" class="btn btn-primary">Filter</button>
 
-}
+}*@
+
+
+<form asp-action="Index1" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Find by vehicle make:<br />
+            <input type="text" name="MakeName" value="@ViewBag.CurrentFilter" />
+            <br />
+            <label for="PageSize" style="display: inline-block; width: 150px;">Results per page:</label>
+            <select name="PageSize" class="form-control" onchange="this.form.submit()" style="width: 100px;">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+            </select>
+            <input type="submit" value="Search" class="btn btn-default" /> | <a asp-action="Index1">Clear parameters and default page size = 5</a>
+
+
+
+        </p>
+    </div>
+</form>
 
 <table class="table">
     <thead>
@@ -43,9 +68,31 @@
     var prevDisabled = !Model.HasPrevious ? "disabled" : "";
     var nextDisabled = !Model.HasNext ? "disabled" : "";
 }
-<a asp-action="Index1" asp-route-pageNumber="@(Model.PageIndex-1)" class="btn btn-default @prevDisabled">
-    Previous
-</a>
-<a asp-action="Index1" asp-route-pageNumber="@(Model.PageIndex+1)" class="btn btn-default @nextDisabled">
-    Next
-</a>
+<nav>
+    <ul class="pagination">
+        <li class="page-item @(Model.HasPrevious ? "" : "disabled")">
+            <a class="page-link" href="@Url.Action("Index", new {searchString = makeName, pageNumber = Model.PageIndex - 1, pageSize = pageSize })">Previous</a>
+        </li>
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                <a class="page-link" href="@Url.Action("Index", new { searchString = makeName, pageNumber = i, pageSize = pageSize })">@i</a>
+            </li>
+        }
+        <li class="page-item @(Model.HasNext ? "" : "disabled")">
+            <a class="page-link" href="@Url.Action("Index", new { searchString = makeName, pageNumber = Model.PageIndex + 1, pageSize = pageSize })">Next</a>
+        </li>
+    </ul>
+</nav>
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var pageSize = '@(ViewBag.PageSize)';
+            if (pageSize !== '') {
+                $('select[name="PageSize"]').val(pageSize);
+            }
+        });
+    </script>
+}
